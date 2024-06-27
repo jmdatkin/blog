@@ -1,0 +1,144 @@
+---
+title: "Building complex stateful components with useReducer"
+publishedAt: "2024-05-19"
+summary: "A pattern to build complex React components that interact with state."
+---
+
+I was recently building a filter editor in React. It's a component that allows the user to
+
+I wanted this component to have a clean prop interface such that its component tree should render based on a single JSON object passed to the root level as a prop.
+Then,
+
+A filter schema consists of one or more top-level filter groups. Each filter group has one or more filter rules.
+Filter groups, and filter rules within a group, are logically combined using either an AND or OR operation.
+So, there are a number of distinct state transformations I need to make:
+
+1. Add a new filter group
+2. Add a new filter to a filter group
+3. Change the logical operator between filter groups
+4. Change the logical operator between filters in a group.
+5. Delete a filter group
+6. Delete a filter from a filter group
+
+I found a great pattern using React's `useReducer` hook that cleanly encapsulates the logic for each of these actions.
+
+# The reducer
+
+## What is `useReducer`?
+
+[`useReducer`](https://react.dev/reference/react/useReducer) is similar to `useState` in that it holds a reactive state value, and can be updated to trigger re-renders.
+Where it differs, however, is that it lets us define custom logic for updating the state.
+
+## Reducer function
+
+The first argument supplied to `useReducer` is the reducer function. This function will be used to mutate the state, and takes two arguments.
+The second argument is an action payload, which is what we pass into the dispatch function when we want to mutate the state. We can use the action payload any way we like.
+
+# Example
+
+Let's look at a simple example.
+
+<iframe
+  src="https://codesandbox.io/embed/nk6z69?view=preview&module=%2Fsrc%2FApp.tsx"
+  style={{
+    width: "100%",
+    height: "500px",
+    border: 0,
+    borderRadius: "4px",
+    overflow: "hidden",
+  }}
+  title="silly-mahavira"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+# Types
+
+Let's start by looking at the shape of our data.
+
+We'll start at the simplest level, defining some enum values, and the shape of our basic filter rule type.
+
+```typescript
+/* Filter function the rule will use */
+export enum FilterOperator {
+  BeginsWith = "BEGINS_WITH",
+  Includes = "INCLUDES",
+}
+
+/* Which way to logically combine rules */
+export enum FilterCombinator {
+  And = "AND",
+  Or = "OR",
+}
+
+/* A single rule on a field */
+export interface FilterRule {
+  id: string;
+  field: string;
+  value: any;
+  operator: FilterOperator;
+}
+```
+
+Now let's compose these types into our hierarchical schema structure:
+
+```typescript
+/* A top-level group of rules */
+export interface FilterGroup {
+  id: string;
+  combinator: FilterCombinator;
+  not: boolean;
+  rules: FilterRule[];
+}
+
+/* Top-level schema */
+export interface FilterSchema {
+  combinator: FilterCombinator;
+  rules: FilterGroup[];
+}
+```
+
+Awesome!! Now that the shape of our objects is laid out, let's create some sample data to test with.
+
+```json
+ const filterSchema: FilterSchema<User> = {
+    combinator: FilterCombinator.And,
+    rules: [
+      {
+        id: nanoid(6),
+        combinator: FilterCombinator.Or,
+        not: false,
+        rules: [
+          {
+            id: nanoid(6),
+            field: "email",
+            value: "@gmail.com",
+            operator: FilterOperator.Includes,
+          },
+          {
+            id: nanoid(6),
+            field: "name",
+            value: "Julian",
+            operator: FilterOperator.BeginsWith,
+          },
+        ],
+      },
+      {
+        id: nanoid(6),
+        combinator: FilterCombinator.And,
+        not: false,
+        rules: [
+          {
+            id: nanoid(6),
+            field: "last_logged_in",
+            value: Date.now(),
+            operator: FilterOperator.DateBefore,
+          },
+        ],
+      },
+    ],
+  };
+
+```
+
+In this case, this schema represents a the constraint: "users whose email includes `@gmail.com` or whose name begins with `Julian`, or, whose last logged in date is before today".

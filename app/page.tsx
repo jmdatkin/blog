@@ -1,21 +1,40 @@
-import { BlogPosts } from 'app/components/posts'
+import Divider from "./components/divider";
+import { Education } from "./components/education";
+import Links from "./components/links";
+import { Projects } from "./components/projects";
 
 export default function Page() {
   return (
     <section>
-      <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
-        My Portfolio
-      </h1>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tighter">
+          Julian Atkin
+        </h1>
+        <p className="text-neutral-500">jatkindev@gmail.com</p>
+        <p className="text-neutral-500">(917) 626 7874</p>
+      </div>
       <p className="mb-4">
-        {`I'm a Vim enthusiast and tab advocate, finding unmatched efficiency in
-        Vim's keystroke commands and tabs' flexibility for personal viewing
-        preferences. This extends to my support for static typing, where its
-        early error detection ensures cleaner code, and my preference for dark
-        mode, which eases long coding sessions by reducing eye strain.`}
+        Passionate, driven, and detail-oriented engineer.<br></br>
+        Looking to build the next generation of software products.<br></br>
+        <br></br>
+        10x Node.js, Next.js, AWS architect.
       </p>
-      <div className="my-8">
-        <BlogPosts />
+      <p className="text-neutral-700">
+        Node.js | Next.js | NestJS | PostgreSQL | MongoDB | SNS | SQS | EC2 | S3
+        | Fargate
+      </p>
+      <Links />
+      <div className="">
+        <Divider />
+        <div className="my-12">
+          <Projects />
+        </div>
+        <Divider />
+        <div className="my-12">
+          <Education />
+          {/* <BlogPosts /> */}
+        </div>
       </div>
     </section>
-  )
+  );
 }

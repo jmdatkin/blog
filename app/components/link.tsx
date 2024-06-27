@@ -15,12 +15,16 @@ function ArrowIcon() {
   );
 }
 
-export default function Footer() {
+export default function Link(props: { href: string; label: string }) {
   return (
-    <footer className="mb-16">
-      <p className="mt-8 text-neutral-600 dark:text-neutral-300">
-        © {new Date().getFullYear()}
-      </p>
-    </footer>
+    <a
+      className="flex items-center hover:text-neutral-800 dark:hover:text-neutral-100 hover:underline decoration-dotted"
+      rel="noopener noreferrer"
+      target="_blank"
+      href={props.href}
+    >
+      <ArrowIcon />
+      <p className="ml-2 h-7">{props.label}</p>
+    </a>
   );
 }
