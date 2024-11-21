@@ -6,18 +6,22 @@ import { highlight } from "sugar-high";
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
-    <th key={index}>{header}</th>
+    <th className="border border-zinc-500 bg-zinc-950 p-2" key={index}>
+      {header}
+    </th>
   ));
   let rows = data.rows.map((row, index) => (
     <tr key={index}>
       {row.map((cell, cellIndex) => (
-        <td key={cellIndex}>{cell}</td>
+        <td className="border border-zinc-500 p-2" key={cellIndex}>
+          {cell}
+        </td>
       ))}
     </tr>
   ));
 
   return (
-    <table>
+    <table className="border-collapse">
       <thead>
         <tr>{headers}</tr>
       </thead>
@@ -51,6 +55,14 @@ function RoundedImage(props) {
 function Code({ children, ...props }) {
   let codeHTML = highlight(children);
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />;
+}
+
+function Center({ children }) {
+  return <p className="text-center">{children}</p>;
+}
+
+function LineBreak() {
+  return <br />;
 }
 
 function slugify(str) {
@@ -97,6 +109,8 @@ let components = {
   a: CustomLink,
   code: Code,
   Table,
+  br: LineBreak,
+  Center: Center,
 };
 
 export function CustomMDX(props) {

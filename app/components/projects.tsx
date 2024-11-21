@@ -13,6 +13,7 @@ export function Projects() {
           Infinite realtime messaging board
         </p>
         <Image
+          alt="Grid chat preview"
           className="border"
           width={480}
           height={320}
@@ -27,6 +28,7 @@ export function Projects() {
           In-browser image cropping and compression tool
         </p>
         <Image
+          alt="Croppy preview"
           className="border"
           width={480}
           height={320}
@@ -42,6 +44,7 @@ export function Projects() {
         </h3>
         <p className="text-neutral-700 mb-4">Interactive browser-based game</p>
         <Image
+          alt="League of legends ability quiz preview"
           className="border"
           width={480}
           height={320}

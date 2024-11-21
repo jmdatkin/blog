@@ -15,6 +15,7 @@ export function BlogPosts() {
           }
           return 1;
         })
+        .filter((item) => !item.metadata.draft)
         .map((post) => (
           <Link
             key={post.slug}
